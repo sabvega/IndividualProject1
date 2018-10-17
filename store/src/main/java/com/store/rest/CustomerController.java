@@ -52,8 +52,8 @@ public class CustomerController extends HttpServlet  {
 
 	@PUT
 	@Path("/customers/")
-	public Collection<Customers> updateCustomer() {
-	return customerService.updateCustomer();
+	public Collection<Customers> updateCustomer(Customer customer) {
+	return customerService.updateCustomer(customer);
 }
 
 	@DELETE

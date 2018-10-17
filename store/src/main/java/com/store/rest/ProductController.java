@@ -48,6 +48,7 @@ public class ProductController extends HttpServlet  {
 		return ProductService.getProduct(itemId);
 
 	}
+
 	@GET
 	@Path("/items/{keyword}")
 	public String getProductByKeyword(@PathParam("keyword")String keyword) {
