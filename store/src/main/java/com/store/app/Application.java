@@ -34,12 +34,9 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+      CustomerDAO customerDAO = new CustomerDAO(jdbcTemplate);
+      customerDAO.getAllCustomers().forEach(customer -> log.info(customer.toString()));
 
-        /** TODO:
-			You use the provided .sql scripts to create and populate tables.
-			Then, you can add calls to your CRUD operations from within this method.
-
-		**/
 
     }
 }
