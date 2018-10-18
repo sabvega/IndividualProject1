@@ -1,36 +1,45 @@
 package dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.store.model.*;
 import java.util.Collection;
 import java.util.ArrayList;
 
 
 public class ProductDAO {
-    private JdbcTemplate jdbcTemplate;
+  private JdbcTemplate jdbcTemplate;
+	  private static final String driverClassName = "com.mysql.jdbc.Driver";
+    private static final String url = "jdbc:mysql://localhost:3306/storeproject";
+    private static final String dbUsername = "root";
+    private static final String dbPassword = "GreatUF123!";
 
     public ProductDAO(JdbcTemplate jdbcTemp) {
         this.jdbcTemplate = jdbcTemp;
     }
 
+    public ProductDAO() {
+    this.jdbcTemplate = new JdbcTemplate(this.getDataSource());
+}
+
     public Product createProduct(Product product){
         //When user wants to add a new product to the product table
         //updating database
 
-        this.jdbcTemplate.update("INSERT INTO products (id, itemId, name, msrp, salePrice, upc, shortDescription, brandName, size, color, gender,) VALUES (?, ?, ?)",
-          product.getId(), product.getItemId(), product.getName(), product.getMsrp(), product.getSalePrice(), product.getUpc(), product.getShortDescription(), product.getBrandName(), product.getSize(), product.getColor(), product.getGender()
+        this.jdbcTemplate.update("INSERT INTO products (itemId, name, msrp, salePrice, upc, shortDescription, brandName, size, color, gender,) VALUES (?, ?, ?)",
+           product.getItemId(), product.getName(), product.getMsrp(), product.getSalePrice(), product.getUpc(), product.getShortDescription(), product.getBrandName(), product.getSize(), product.getColor(), product.getGender()
         );
         return product;
     }
 
     public Product getProduct(int itemId){
       //list product by ID
-        Product product = new Product(id);
+        Product product = new Product(itemId);
 
         this.jdbcTemplate.query( "SELECT * FROM products WHERE itemId = ?", new Object[] { itemId },
-        (rs, rowNum) -> new Product(rs.getString("name"), rs.getInt("itemId"))
-      ).forEach(addedProduct -> {
+        (rs, rowNum) -> new Product(rs.getString("name"), rs.getInt("itemId") rs.getDouble("salePrice"), rs.getInt("upc"),
+                        rs.getString("shortDescription"), rs.getString("brandName"), rs.getString("size"), rs.getString("color"), rs.getString("gender"))
+        ).forEach(addedProduct -> {
           product.setName(addedProduct.getName());
           product.setItemId(addedProduct.getItemId());
           product.setMsrp(addedProduct.getMsrp());
@@ -51,9 +60,11 @@ public class ProductDAO {
         Collection<Product> products = new ArrayList<Product>();
 
         this.jdbcTemplate.query("SELECT * FROM products",
-        (rs, rowNum) -> new Product(rs.getInt("id"), rs.getString("title"), rs.getInt("album"))
-        ).forEach(product -> products.add(product) );
-
+        new Object[] { },
+        (rs, rowNum) -> new Product(rs.getInt("itemId"),  rs.getString("name"), rs.getDouble("msrp"), rs.getDouble("salePrice"), rs.getInt("upc"),
+        rs.getString("shortDescription"), rs.getString("brandName"), rs.getString("size"), rs.getString("color"), rs.getString("gender"))
+        ).forEach(product ->
+            products.add(product) );
         return products;
     }
 
@@ -62,24 +73,23 @@ public class ProductDAO {
         Collection<Product> products = new ArrayList<Product>();
 
         this.jdbcTemplate.query(
-                "SELECT id, title FROM products WHERE name = ?", new Object[] { keyword },
-                (rs, rowNum) -> new Product(rs.getInt("id"), rs.getString("title"), keyword)
-        ).forEach(product -> products.add(product) );
-
-        return products;
+        "SELECT * FROM products WHERE name LIKE ? OR shortDescription LIKE ? OR brandName LIKE ? OR size LIKE ? OR color LIKE ? OR gender LIKE ?",
+        new Object[]
+        { "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%"},
+        (rs, rowNum) ->
+                new Product(rs.getInt("itemId"), rs.getString("name"), rs.getDouble("msrp"), rs.getDouble("salePrice"), rs.getInt("upc"),
+                rs.getString("shortDescription"), rs.getString("brandName"), rs.getString("size"), rs.getString("color"), rs.getString("gender"))
+            ).forEach(product -> products.add(product) );
+      return products;
     }
 
-    public boolean deleteProduct(Product product){
-      //delete specific item
-        boolean success = false;
-        //remove this product based off id from the database
 
-        this.jdbcTemplate.update( "DELETE FROM products WHERE id = ? ",
-          product.getId()
-        );
-        success = true;
-        return success;
+    public DriverManagerDataSource getDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
+        return dataSource;
     }
-
-    
 }

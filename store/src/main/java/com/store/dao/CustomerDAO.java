@@ -28,15 +28,15 @@ public class CustomerDAO {
     public Customer createCustomer(Customer customer){
        //when user wants to we add customer and update the table
        this.jdbcTemplate.update(
-           "INSERT INTO customers (id, fname, lname, username, email) VALUES (?,?)", customer.getId(), customer.getFname(), customer.getLname(). customer.getUsername(), customer.getEmail()
+           "INSERT INTO customers (fname, lname, username, email) VALUES (?,?, ?, ?)", customer.getFname(), customer.getLname(). customer.getUsername(), customer.getEmail()
        );
         return customer;
     }
 
     public Customer getCustomerUsername(String username){
-        Customer customer = new Customer(username, "");
-        //Part of the insert/update function for customers
+        Customer customer = new Customer("","", username, "");
 
+        //find customer that contains corresponding username
         this.jdbcTemplate.query(
                 "SELECT * FROM customers WHERE username = ?", new Object[] { username },
                 (rs, rowNum) -> new Customer(rs.getString("username"), rs.getInt("id"))
@@ -49,21 +49,21 @@ public class CustomerDAO {
         return customer;
     }
 
-    public Collection<Customer> getAllCustomers(){
-        Collection<Customer> customers = new ArrayList<Customer>();
-
-        this.jdbcTemplate.query(
-                "SELECT * FROM customers", new Object[] { },
-                (rs, rowNum) -> new Customer(rs.getInt("id"), rs.getString("username"))
-        ).forEach(customer -> customers.add(customer));
-
-        return customers;
-    }
+    // public Collection<Customer> getAllCustomers(){
+    //     Collection<Customer> customers = new ArrayList<Customer>();
+    //
+    //     this.jdbcTemplate.query(
+    //             "SELECT * FROM customers", new Object[] { },
+    //             (rs, rowNum) -> new Customer(rs.getInt("id"), rs.getString("username"))
+    //     ).forEach(customer -> customers.add(customer));
+    //
+    //     return customers;
+    // }
 
     public Customer updateCustomer(Customer customer){
         //changes information in the customer depending on what needs to be updated
-          this.jdbcTemplate.update("UPDATE customers SET title = ? WHERE id = ? ",
-          customer.getTitle(), customer.getId()
+          this.jdbcTemplate.update("UPDATE customers SET fname = ?,  lname = ?, email = ? WHERE username = ? ",
+          customer.getFname(), customer.getLname(), customer.getEmail(), customer.getUsername()
         );
         return customer;
     }
@@ -73,13 +73,10 @@ public class CustomerDAO {
         //deletes the customer specified by id and notifies us by returning
         //a boolean
 
-        this.jdbcTemplate.update("DELETE FROM customers WHERE username = ? ",
-                username  );
+        this.jdbcTemplate.update("DELETE FROM customers WHERE username = ? ", username  );
         success = true;
         return success;
     }
-
-    public Collection<Customer> productsBought()
 
     public DriverManagerDataSource getDataSource() {
   		  DriverManagerDataSource dataSource = new DriverManagerDataSource();

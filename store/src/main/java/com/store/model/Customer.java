@@ -21,6 +21,10 @@ public class Customer {
         return id;
     }
 
+    public int setId() {
+        this.id = id;
+    }
+
     public String getFname() {
         return fname;
     }

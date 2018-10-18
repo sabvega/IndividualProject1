@@ -18,7 +18,7 @@ public class Product {
         this.gender = gender;
     }
 
-    public int getIdtemId() {
+    public int getItemId() {
         return itemId;
     }
 

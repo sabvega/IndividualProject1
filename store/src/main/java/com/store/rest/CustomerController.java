@@ -42,18 +42,24 @@ public class CustomerController extends HttpServlet  {
 
 	}
 
-	@GET
-	@Path("/customers/")
-	public Collection<Customers> getAllCustomers() {
-	return customerService.getAllCustomers();
-
-	}
+	// @GET
+	// @Path("/customers/")
+	// public Collection<Customers> getAllCustomers() {
+	// return customerService.getAllCustomers();
+	//
+	// }
 
 
 	@PUT
 	@Path("/customers/")
 	public Collection<Customers> updateCustomer(Customer customer) {
 	return customerService.updateCustomer(customer);
+}
+
+@PUT
+@Path("/customers/")
+public Collection<Customers> createCustomer(Customer customer) {
+return customerService.createCustomer(customer);
 }
 
 	@DELETE

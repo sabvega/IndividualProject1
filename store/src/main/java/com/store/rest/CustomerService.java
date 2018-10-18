@@ -24,9 +24,9 @@ public class CustomerService {
 		return ans;
 		}
 
-		public Collection<Customers> getAllCustomers(){
-			return customerDAO.getAllCustomers();
-		}
+		// public Collection<Customers> getAllCustomers(){
+		// 	return customerDAO.getAllCustomers();
+		// }
 
 		public booelan deleteCustomer(String username){
 			return customerDAO.deleteCustomer(username);
@@ -35,10 +35,6 @@ public class CustomerService {
 		public Customer updateCustomer(Customer customer){
 			return customerDAO.updateCustomer(customer);
 		}
-
-	public Collection<Customers> getAllCustomers() {
-		return customerService.getAllCustomers();
-	}
 
 
 	}
